@@ -1,2 +1,6 @@
 .DS_Store
 node_modules/
+
+# Hrágögn úr Overpass. Sótt handvirkt (sjá tools/README.md), unnin í
+# assets/js/river.js og ekki geymd — þau eru stór og síðan öll gefin út.
+tools/data/

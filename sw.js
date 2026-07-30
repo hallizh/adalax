@@ -7,7 +7,8 @@
  * veiðistaðirnir og mælingarnar virka áfram án sambands.
  */
 
-const CACHE = 'adalax-v1';
+// Hækkað þegar umgjörðin breytist — gamla geymslan er hreinsuð við virkjun.
+const CACHE = 'adalax-v2';
 
 const SHELL = [
   '.',
@@ -16,6 +17,8 @@ const SHELL = [
   'assets/css/app.css',
   'assets/js/app.js',
   'assets/js/data.js',
+  'assets/js/river.js',
+  'assets/js/riverpath.js',
   'assets/js/store.js',
   'assets/js/geo.js',
   'assets/js/zonemap.js',

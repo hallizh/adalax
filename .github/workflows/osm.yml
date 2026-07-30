@@ -1,0 +1,54 @@
+name: Fetch OSM river data
+
+# Handvirkt keyrt. Overpass næst ekki úr þróunarumhverfinu, en hlauparar
+# GitHub hafa opna nettengingu — hrágögnin eru sótt hér og lögð í greinina.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/fetch-osm.mjs'
+      - '.github/workflows/osm.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: node tools/fetch-osm.mjs
+      - run: node tools/build-river.mjs
+      - run: node tools/match-names.mjs
+
+      # Hrágögnin eru um 1 MB og öll síðan er gefin út á Pages, svo þau eru
+      # geymd sem hlutur en ekki lögð í greinina — aðeins unna árlínan fer þangað.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: osm-data
+          path: tools/data
+
+      - name: Commit the river line
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/js/river.js
+          if git diff --cached --quiet; then
+            echo "engin breyting"
+            exit 0
+          fi
+          git commit -m "Rebuild the Laxá river line from OSM"
+          # Greinin gæti hafa færst á meðan sótt var.
+          for attempt in 1 2 3; do
+            git pull --rebase origin ${{ github.ref_name }} && \
+              git push origin HEAD:${{ github.ref_name }} && exit 0
+            sleep $((attempt * 5))
+          done
+          exit 1
