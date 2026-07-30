@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="is">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Laxá í Aðaldal — svæðaleiðarvísir</title>
+    <meta
+      name="description"
+      content="Gagnvirkur leiðarvísir um veiðisvæðin sex í Laxá í Aðaldal, með handteiknuðu kortunum, raunkorti og staðsetningu."
+    />
+    <meta name="theme-color" content="#f4e3c1" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#171310" media="(prefers-color-scheme: dark)" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icon-180.png" />
+    <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="assets/css/app.css" />
+    <script src="vendor/leaflet/leaflet.js" defer></script>
+  </head>
+  <body data-view="drawing">
+    <header class="topbar">
+      <div class="topbar__row">
+        <h1 class="topbar__title">
+          Laxá í Aðaldal
+          <small>Svæðaskipting — 12 stanga</small>
+        </h1>
+        <div class="topbar__tools">
+          <button id="locate" class="iconbtn" type="button" title="Finna mig">
+            <span aria-hidden="true">◎</span><span class="sr">Finna mig</span>
+          </button>
+          <button id="settings-open" class="iconbtn" type="button" title="Stillingar">
+            <span aria-hidden="true">☰</span><span class="sr">Stillingar</span>
+          </button>
+        </div>
+      </div>
+      <nav id="zones" class="zonetabs" aria-label="Svæði"></nav>
+      <div class="statusline">
+        <span id="geostatus">Staðsetning ekki virk</span>
+        <span class="statusline__sep">·</span>
+        <span><b id="fixcount">0</b> mæld hnit</span>
+      </div>
+      <button id="nearest" class="nearest" type="button" hidden></button>
+    </header>
+
+    <nav class="viewtabs" aria-label="Kortasýn">
+      <button class="viewtab is-active" type="button" data-view="drawing" aria-pressed="true">
+        Teikning
+      </button>
+      <button class="viewtab" type="button" data-view="real" aria-pressed="false">Raunkort</button>
+      <button class="viewtab" type="button" data-view="both" aria-pressed="false">Bæði</button>
+    </nav>
+
+    <main class="layout">
+      <section class="pane pane--drawing" aria-label="Handteiknað svæðakort">
+        <div id="drawing"></div>
+      </section>
+
+      <section class="pane pane--real" aria-label="Raunkort">
+        <div id="real"></div>
+      </section>
+
+      <aside class="pane pane--list" aria-label="Veiðistaðir">
+        <div id="zonehead" class="zonehead"></div>
+        <div id="pools" class="pools"></div>
+        <p class="footnote">
+          Byggt á handteiknaða svæðakortinu. Hnit sem eru merkt <em>áætluð</em> eru ágiskun — röðin
+          eftir ánni er rétt en staðsetningin getur skeikað. Skráðu staðina á bakkanum með
+          <b>„Ég er hér“</b>.
+        </p>
+      </aside>
+    </main>
+
+    <div id="sheet" class="sheet" role="dialog" aria-modal="false" aria-label="Veiðistaður" hidden>
+      <div class="sheet__grip"></div>
+      <button id="sheet-close" class="sheet__close" type="button" aria-label="Loka">×</button>
+      <div id="sheet-body"></div>
+    </div>
+
+    <div id="settings" class="modal" role="dialog" aria-modal="true" aria-label="Stillingar" hidden>
+      <div class="modal__card">
+        <div class="modal__head">
+          <h2>Stillingar</h2>
+          <button id="settings-close" class="sheet__close" type="button" aria-label="Loka">×</button>
+        </div>
+        <div id="settings-body" class="modal__body"></div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script type="module" src="assets/js/app.js"></script>
+  </body>
+</html>

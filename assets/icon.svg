@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Laxá í Aðaldal">
+  <rect width="512" height="512" rx="112" fill="#f3e6cd"/>
+  <path d="M196 44c-28 62-6 104 14 140 22 40 30 74 4 122-26 48-24 96 18 162"
+        fill="none" stroke="#6fa8c7" stroke-width="44" stroke-linecap="round"/>
+  <path d="M196 44c-28 62-6 104 14 140 22 40 30 74 4 122-26 48-24 96 18 162"
+        fill="none" stroke="#3f4f8f" stroke-width="12" stroke-linecap="round" opacity=".45"/>
+  <path d="M300 214c46-26 92-14 122 26-30 40-76 52-122 26l-26 22v-96z" fill="#c33a2e"/>
+  <circle cx="404" cy="234" r="9" fill="#f3e6cd"/>
+</svg>
