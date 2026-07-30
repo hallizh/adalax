@@ -4,11 +4,35 @@
  * Heimild: handteiknað svæðakort (skannað 2026-07-29). Myndirnar í /maps eru
  * beinir útsnið úr þeirri skönnun.
  *
- * Hnit (lat/lon) eru ÁÆTLUÐ. Þau eru reiknuð með því að dreifa veiðistöðum
- * jafnt eftir ánni milli endapunkta hvers hálfsvæðis. Röðin upp/niður ána er
- * rétt, en hver punktur getur skeikað hundruðum metra. Notaðu "Ég er hér" til
- * að skrá raunhnit — þá víkur ágiskunin fyrir mælingu.
+ * Hnit (lat/lon) eru ÁÆTLUÐ, en ekki lengur úr lausu lofti gripin.
+ *
+ * Hvert hálfsvæði á sér `reach`: kafla á farvegi Laxár, mældan í metrum frá
+ * upptökunum við Mývatn (sjá assets/js/river.js, unnið úr OpenStreetMap).
+ * Veiðistaðir dreifast jafnt EFTIR ÁNNI innan kaflans, svo þeir sitja á vatni
+ * en ekki uppi á landi eins og áður varð af beinni línu milli endapunkta.
+ *
+ * Kaflarnir eru festir við kennileiti sem eru mæld í OSM (sjá ANCHORS). Milli
+ * akkeranna er bilið jafnt — þar liggur ágiskunin. Röðin upp og niður ána er
+ * rétt, en einstakur staður getur enn skeikað hundruðum metra.
+ *
+ * Notaðu "Ég er hér" til að skrá raunhnit — þá víkur ágiskunin fyrir mælingu.
  */
+
+import * as river from './riverpath.js';
+
+/**
+ * Kennileiti úr OpenStreetMap sem kaflarnir eru festir við, sem stöð í metrum
+ * eftir ánni. Þetta eru einu punktarnir sem eiga sér mælda stoð; allt annað er
+ * brúað þar á milli.
+ */
+export const ANCHORS = [
+  { station: 38090, name: 'Hólmavað', for: 'Hólmavaðsstífla — skil 6A/6B', at: [65.85743, -17.40443] },
+  { station: 47420, name: 'Knútsstaðir', for: 'Knútsstaðatún — neðri endi 4A', at: [65.92084, -17.44764] },
+  { station: 53390, name: 'Brú Norðausturvegar', for: 'Brúarflúð og Brúarstrengur — skil 3B/2A', at: [65.96624, -17.40952] },
+  { station: 55350, name: 'Kistukvísl', for: 'Kistuhylur — efri endi 1B', at: [65.98238, -17.41604] },
+  { station: 55380, name: 'Æðarfossar', for: 'Stórifoss og fosspollarnir — svæði 1', at: [65.98298, -17.41462] },
+  { station: 57670, name: 'Laxárós', for: 'Sjávarhola — neðsti staður árinnar', at: [65.99297, -17.41400] },
+];
 
 export const SOURCE = {
   title: 'Laxá í Aðaldal',
@@ -38,7 +62,8 @@ export const RULES = [
  * þar sem Æðarfossar eru flæmi frekar en samfelldur strengur.
  *
  * x/y eru prósentur af kortamyndinni (0–100), mælt frá efra vinstra horni.
- * geo.from/geo.to eru endapunktar hálfsvæðisins; veiðistaðir dreifast þar á milli.
+ * reach er kafli hálfsvæðisins á farveginum, í metrum frá upptökum árinnar;
+ * veiðistaðir dreifast jafnt eftir ánni þar á milli.
  */
 export const ZONES = [
   {
@@ -53,7 +78,7 @@ export const ZONES = [
       {
         id: 'A',
         range: 'Bjargstrengur – Sjávarhola',
-        geo: { from: [66.0268, -17.416], to: [66.03, -17.42] },
+        reach: [55560, 57610],  // 55.56–57.61 km · Bjargstrengur niður í Sjávarholu, við ósinn
         pools: [
           { n: 1, name: 'Bjargstrengur', x: 45.8, y: 79.0 },
           { n: 2, name: 'Breiðan', x: 50.5, y: 91.0 },
@@ -67,7 +92,7 @@ export const ZONES = [
       {
         id: 'B',
         range: 'Stórifoss – Kistuhylur',
-        geo: { from: [66.0255, -17.4148], to: [66.0243, -17.4137] },
+        reach: [55480, 55250],  // 55.48–55.25 km · fossaflæmið sjálft; Kistuhylur efst, Stórifoss neðst
         pools: [
           { n: 8, name: 'Stórifoss', x: 47.5, y: 69.5 },
           { n: 9, name: 'Fosspollur', x: 50.8, y: 73.5 },
@@ -90,7 +115,7 @@ export const ZONES = [
       {
         id: 'A',
         range: 'Brúarstrengur – Kiðeyjarbrot',
-        geo: { from: [65.9985, -17.386], to: [66.0115, -17.3995] },
+        reach: [53390, 54355],  // 53.39–54.35 km · frá brúnni niður eftir
         pools: [
           { name: 'Brúarstrengur', x: 48.6, y: 2.4 },
           { name: 'Brúarhylur', x: 50.8, y: 7.3 },
@@ -106,7 +131,7 @@ export const ZONES = [
       {
         id: 'B',
         range: 'Þokuflúð – Mjósund',
-        geo: { from: [66.013, -17.401], to: [66.023, -17.412] },
+        reach: [54476, 55200],  // 54.48–55.20 km · niður að Fossavaði, rétt ofan fossanna
         pools: [
           { name: 'Þokuflúð', x: 68.3, y: 63.6 },
           { name: 'Sandhólaálar', x: 68.3, y: 80.3 },
@@ -131,7 +156,7 @@ export const ZONES = [
       {
         id: 'A',
         range: 'Malargryfja – Straumáll',
-        geo: { from: [65.964, -17.37], to: [65.976, -17.3765] },
+        reach: [49808, 51400],  // 49.81–51.40 km
         pools: [
           { name: 'Malargryfja', x: 81.6, y: 8.3 },
           { name: 'Laxatangi', x: 70.6, y: 6.0 },
@@ -143,7 +168,7 @@ export const ZONES = [
       {
         id: 'B',
         range: 'Eskeyjarflúð – Brúarflúð',
-        geo: { from: [65.979, -17.3785], to: [65.9955, -17.3848] },
+        reach: [51798, 53390],  // 51.80–53.39 km · endar á Brúarflúð við brúna
         pools: [
           { name: 'Eskeyjarflúð', x: 28.2, y: 62.9 },
           { name: 'Litla Núpabreiða', x: 15.3, y: 80.0 },
@@ -166,7 +191,7 @@ export const ZONES = [
       {
         id: 'A',
         range: 'Merkjapollur – Knútsstaðatún',
-        geo: { from: [65.926, -17.352], to: [65.94, -17.36] },
+        reach: [45927, 47420],  // 45.93–47.42 km · endar á Knútsstaðatúni
         pools: [
           { name: 'Merkjapollur', x: 23.8, y: 6.5 },
           { name: 'Birgisflúð', x: 25.6, y: 25.6 },
@@ -178,7 +203,7 @@ export const ZONES = [
       {
         id: 'B',
         range: 'Grundarhorn – Fossbrún',
-        geo: { from: [65.943, -17.3615], to: [65.96, -17.3685] },
+        reach: [47818, 49410],  // 47.82–49.41 km
         pools: [
           { name: 'Grundarhyljir', x: 63.9, y: 52.3 },
           { name: 'Grundarhorn', x: 67.3, y: 56.5 },
@@ -200,7 +225,7 @@ export const ZONES = [
       {
         id: 'A',
         range: 'Leirhólmi – Presthylur',
-        geo: { from: [65.899, -17.342], to: [65.908, -17.346] },
+        reach: [40702, 42568],  // 40.70–42.57 km
         pools: [
           { name: 'Leirhólmi', x: 52.5, y: 17.0 },
           { name: 'Hornflúð', x: 18.2, y: 17.3 },
@@ -213,7 +238,7 @@ export const ZONES = [
       {
         id: 'B',
         range: 'Þvottastrengur – Dýjaveitur',
-        geo: { from: [65.9095, -17.3468], to: [65.9225, -17.3508] },
+        reach: [42942, 45554],  // 42.94–45.55 km
         pools: [
           { name: 'Þvottastrengur', x: 53.1, y: 64.5 },
           { name: 'Kirkjuhólmakvísl', x: 63.3, y: 70.0 },
@@ -238,7 +263,7 @@ export const ZONES = [
       {
         id: 'A',
         range: 'Suðureyri – Hólmavaðsstífla að austan',
-        geo: { from: [65.872, -17.333], to: [65.885, -17.339] },
+        reach: [36224, 38090],  // 36.22–38.09 km · ofan Hólmavaðs; framlengt með bilinu neðar
         pools: [
           { name: 'Langeyjareyri', x: 46.7, y: 7.5, outside: true },
           { name: 'Suðureyri', x: 48.6, y: 11.3 },
@@ -251,7 +276,7 @@ export const ZONES = [
       {
         id: 'B',
         range: 'Hólmavaðsstífla – Neðri Grástraumur',
-        geo: { from: [65.8855, -17.3392], to: [65.8975, -17.3415] },
+        reach: [38090, 40329],  // 38.09–40.33 km · hefst á Hólmavaðsstíflu
         pools: [
           { name: 'Hólmavaðsstífla austan', x: 40.1, y: 62.5 },
           { name: 'Sjónarhóll', x: 53.2, y: 72.0 },
@@ -273,17 +298,18 @@ export function poolId(zoneId, halfId, index) {
 
 /**
  * Flettir svæðunum út í einn lista af veiðistöðum með áætluðum hnitum.
- * Hnitin fást með línulegri brúun milli endapunkta hvers hálfsvæðis.
+ * Staðirnir dreifast jafnt eftir farveginum innan kafla hálfsvæðisins, svo
+ * hnitin fylgja beygjum árinnar í stað þess að liggja á beinni línu.
  */
 export function allPools() {
   const out = [];
   for (const zone of ZONES) {
     for (const half of zone.halves) {
-      const [lat0, lon0] = half.geo.from;
-      const [lat1, lon1] = half.geo.to;
+      const [s0, s1] = half.reach;
       const last = Math.max(half.pools.length - 1, 1);
       half.pools.forEach((pool, i) => {
         const t = half.pools.length === 1 ? 0 : i / last;
+        const [lat, lon] = river.at(s0 + (s1 - s0) * t);
         out.push({
           ...pool,
           id: poolId(zone.id, half.id, i),
@@ -295,8 +321,8 @@ export function allPools() {
           halfId: half.id,
           color: zone.color,
           image: zone.image,
-          lat: lat0 + (lat1 - lat0) * t,
-          lon: lon0 + (lon1 - lon0) * t,
+          lat,
+          lon,
         });
       });
     }
@@ -305,4 +331,4 @@ export function allPools() {
 }
 
 /** Miðja alls veiðisvæðisins — upphafsstaða á raunkortinu. */
-export const RIVER_CENTER = [65.95, -17.377];
+export const RIVER_CENTER = river.at((36224 + 57610) / 2);

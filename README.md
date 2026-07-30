@@ -24,13 +24,30 @@ Kyrrstæð síða — engin bakendaþjónusta, engir lyklar, ekkert sem þarf a�
 
 ## Um hnitin — lestu þetta
 
-Handteiknaða kortið hefur engin hnit. Veiðistaðirnir eru því **áætlaðir**: hvert hálfsvæði á sér
-upphafs- og endapunkt og staðirnir dreifast jafnt þar á milli.
+Handteiknaða kortið hefur engin hnit. Veiðistaðirnir eru því **áætlaðir**, en áætlunin hvílir á
+tvennu sem er mælt:
 
-Það þýðir:
+1. **Farvegur Laxár** úr OpenStreetMap (`assets/js/river.js`). Hver veiðistaður er lagður á
+   farveginn sjálfan, ekki á beina línu milli endapunkta.
+2. **Sex kennileiti** sem tengja svæðaskiptinguna við ána — Hólmavað, Knútsstaðir, brú
+   Norðausturvegar, Kistukvísl, Æðarfossar og ósinn. Þau eru talin upp í `ANCHORS` í
+   `assets/js/data.js`, hvert með sínu OSM-hniti.
 
-- **Röðin upp og niður ána er rétt.** Hver staður situr réttum megin við nágranna sína.
-- **Staðsetningin sjálf getur skeikað hundruðum metra.** Endapunktarnir eru ágiskun.
+Milli akkeranna dreifast staðirnir jafnt **eftir ánni**. Það þýðir:
+
+- **Hver staður situr á vatni**, réttum megin við nágranna sína, í réttri fjarlægð eftir farvegi.
+- **Skilin milli svæða eru rétt** þar sem akkeri liggur — við Hólmavaðsstíflu, Knútsstaðatún,
+  brúna og Æðarfossa.
+- **Staðsetningin milli akkera getur enn skeikað hundruðum metra.** Jafna bilið er ágiskun; í
+  raun eru veiðistaðir misþétt settir.
+
+Fyrri útgáfa dreifði stöðunum á beina línu milli endapunkta sem voru lesnir af auga. Allir 76
+staðirnir lentu meira en kílómetra frá ánni — miðgildi frávika var 2,6 km og mest 4,1 km, sumt
+út á sjó. Sú villa er farin.
+
+Eitt stendur eftir sem vert er að vita: svæði 2, frá brúnni niður að Æðarfossum, fær 16
+veiðistaði á tæpa 2 km meðan önnur svæði hafa 350–400 m á milli staða. Kaflinn er kvíslóttur og
+þéttnefndur, svo það getur staðist — en sé einhvers staðar skekkja eftir, er hún þar.
 
 Öll áætluð hnit eru merkt `áætlað` og teiknuð með brotinni línu. Um leið og þú skráir stað með
 „Ég er hér“ víkur ágiskunin fyrir mælingu, og bæði kortin batna: svæðalínan verður heil, og þegar
@@ -88,7 +105,9 @@ Staðsetning krefst öruggs samhengis: `https://` eða `localhost`. Á `file://`
 
 ```
 index.html                 umgjörðin
-assets/js/data.js          svæði, veiðistaðir, merki á teikningu, áætluð hnit
+assets/js/data.js          svæði, veiðistaðir, merki á teikningu, kaflar og akkeri
+assets/js/river.js         farvegur Laxár úr OSM (unnið, ekki handskrifað)
+assets/js/riverpath.js     stöðvar eftir ánni: punktur -> vegalengd og öfugt
 assets/js/app.js           svæðaval, listi, veiðistaðaspjald, stillingar
 assets/js/zonemap.js       handteiknaða kortið: þysj, merki, vörpun staðsetningar
 assets/js/realmap.js       Leaflet-kortið
@@ -97,8 +116,12 @@ assets/js/store.js         localStorage: mælingar, minnispunktar, færð merki
 assets/css/app.css         útlit, ljóst og dökkt
 vendor/leaflet/            Leaflet 1.9.4, afritað inn svo ekkert sé sótt annað
 maps/                      útsnið úr skönnuninni
+tools/                     sækir og vinnur OSM-gögnin (sjá tools/README.md)
 sw.js                      þjónustuvinna fyrir notkun án sambands
 ```
+
+Farvegurinn í `assets/js/river.js` er unninn úr OpenStreetMap og fellur því undir
+[ODbL](https://opendatacommons.org/licenses/odbl/).
 
 Kortaflísar raunkortsins koma frá Esri, OpenStreetMap og OpenTopoMap. Þær eru ekki geymdar
 fyrirfram, svo raunkortið er autt þar sem ekkert samband er — teikningin, veiðistaðirnir,
