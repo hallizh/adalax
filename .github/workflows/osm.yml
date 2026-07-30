@@ -4,6 +4,10 @@ name: Fetch OSM river data
 # GitHub hafa opna nettengingu — hrágögnin eru sótt hér og lögð í greinina.
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'tools/fetch-osm.mjs'
+      - '.github/workflows/osm.yml'
 
 permissions:
   contents: write
