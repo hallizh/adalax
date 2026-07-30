@@ -4,6 +4,8 @@ Gagnvirkur leiðarvísir um veiðisvæðin sex í Laxá í Aðaldal, byggður á
 svæðakortinu. Hvert svæði er sitt eigið gagnvirka kort: teikningin sjálf með smellanlegum
 veiðistöðum, raunkort með loftmynd, og staðsetning þín ofan á hvoru tveggja.
 
+**Í loftinu: <https://hallizh.github.io/adalax/>**
+
 Kyrrstæð síða — engin bakendaþjónusta, engir lyklar, ekkert sem þarf að reka.
 
 ## Hvað er í boði
@@ -79,8 +81,8 @@ Staðsetning krefst öruggs samhengis: `https://` eða `localhost`. Á `file://`
 
 ## Útgáfa
 
-`.github/workflows/pages.yml` gefur út á GitHub Pages við hverja ýtingu á `main`. Kveiktu á Pages
-í stillingum geymslunnar með **Source: GitHub Actions**.
+`.github/workflows/pages.yml` gefur út á GitHub Pages við hverja ýtingu á `main`. Pages er stillt
+á **Source: GitHub Actions**, svo ýting á `main` dugar — ekkert handtak í viðbót.
 
 ## Uppbygging
 
